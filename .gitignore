@@ -1,0 +1,89 @@
+# =========================
+# Python cache & artifacts
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# =========================
+# Virtual environments
+# =========================
+.env
+.venv
+venv/
+ENV/
+env/
+
+# =========================
+# Jupyter Notebook
+# =========================
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+
+# =========================
+# Data (DO NOT COMMIT DATA)
+# =========================
+data/
+data/**
+!data/README.md
+
+# =========================
+# Model artifacts
+# =========================
+models/
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.onnx
+
+# =========================
+# Logs & outputs
+# =========================
+logs/
+*.log
+
+# =========================
+# MLflow / experiment tracking
+# =========================
+mlruns/
+mlartifacts/
+
+# =========================
+# VS Code
+# =========================
+.vscode/*
+!.vscode/settings.json
+
+# =========================
+# OS-specific files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Coverage & testing
+# =========================
+.coverage
+htmlcov/
+.pytest_cache/
+
+# =========================
+# Build & distribution
+# =========================
+build/
+dist/
+*.egg-info/
+
+# =========================
+# Secrets
+# =========================
+*.env
+*.key
+*.pem
+
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.bak
