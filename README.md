@@ -1,96 +1,98 @@
-## Improved_detection_of_fraud_cases
-#### Data Analysis, Cleaning, and Feature Engineering
+# Improved_detection_of_fraud_cases
+#### Data Analysis, Cleaning, Feature Engineering, and Model Explainability
 
-Overview
-This task focuses on preparing two datasets for modeling by performing data cleaning, exploratory data analysis (EDA), feature engineering, and class imbalance handling. The datasets included are:
+## Overview
+This project focuses on detecting fraudulent transactions using two datasets, performing comprehensive data cleaning, feature engineering, modeling, and model explainability. The workflow covers exploratory data analysis (EDA), handling class imbalance, training baseline and ensemble models, and interpreting model predictions using SHAP.
 
-Fraud Dataset (Fraud_Data.csv) – e-commerce transaction data with user, device, and transaction information.
+---
 
-Credit Card Dataset (creditcard.csv) – anonymized financial transactions from a credit card dataset with severe class imbalance.
+## Data Preparation
 
-Key Steps
+### Fraud Dataset
+- **Data Cleaning:** handled missing values, removed duplicates, corrected datatypes.
+- **EDA:** analyzed univariate and bivariate distributions, visualized class imbalance, and quantified fraud patterns.
+- **Geolocation Integration:** converted IP addresses to integers and mapped them to countries for fraud distribution analysis.
+- **Feature Engineering:** created time-based features (`time_since_signup`, `hour_of_day`, `day_of_week`) and transaction frequency features (`user_transaction_count`, `avg_time_between_tx`).
+- **Data Transformation:** scaled numerical features and encoded categorical features.
+- **Class Imbalance Handling:** applied undersampling and SMOTE-like oversampling to training data.
+- **Output:** cleaned, feature-rich dataset saved as `fraud_cleaned.csv`.
 
-Fraud Dataset
+### Credit Card Dataset
+- **Data Cleaning:** removed duplicates, verified missing values and datatypes.
+- **EDA:** visualized class distribution, transaction amounts, and time features; performed correlation analysis on anonymized PCA features.
+- **Class Imbalance Awareness:** noted extreme imbalance (<0.2% fraud), handled during model training.
+- **Output:** cleaned dataset saved as `creditcard_cleaned.csv`.
 
-Data Cleaning: handled missing values, removed duplicates, corrected datatypes.
+---
 
-EDA: analyzed univariate and bivariate distributions, visualized class imbalance, and quantified fraud patterns.
+## Modeling and Evaluation
 
-Geolocation Integration: converted IP addresses to integers and mapped them to countries to analyze fraud distribution by location.
+### Data Preparation
+- Split datasets using stratified train-test split.
+- Separated features from target (`class`) and dropped raw datetime and high-cardinality ID columns (`signup_time`, `purchase_time`, `device_id`, `ip_address`).
 
-Feature Engineering: created time-based features (time_since_signup, hour_of_day, day_of_week) and transaction frequency features (user_transaction_count, avg_time_between_tx).
+### Models
+1. **Baseline Model:** Logistic Regression with class balancing, trained on undersampled data.
+2. **Ensemble Model:** Random Forest with hyperparameter tuning (`n_estimators`, `max_depth`, `min_samples_split`) using Grid Search and Stratified K-Fold cross-validation (k=5).
+- **Preprocessing:** numerical features scaled with StandardScaler; categorical features one-hot encoded.
 
-Data Transformation: scaled numerical features and encoded categorical features.
+### Evaluation
+- Metrics: F1-score, AUC-PR, confusion matrices.
+- Cross-validation used for stability assessment.
+- Performance comparison led to **Random Forest** selection.
+- Outputs: visualizations for F1-score, AUC-PR, precision-recall curves, confusion matrices.  
+- Best model saved as `models/best_random_forest.pkl`.
 
-Class Imbalance Handling: applied undersampling and SMOTE-like oversampling to training data.
-
-Output: cleaned and feature-rich dataset saved as fraud_cleaned.csv.
-
-Credit Card Dataset
-
-Data Cleaning: removed duplicates and verified missing values and datatypes.
-
-EDA: visualized class distribution, transaction amounts, and time features; performed correlation analysis on anonymized PCA features.
-
-Class Imbalance Awareness: noted extreme imbalance (<0.2% fraud), to be addressed during model training.
-
-Output: cleaned dataset saved as creditcard_cleaned.csv.
-
-#### Modeling and Evaluation
-
-Overview
-This task focuses on building, training, and evaluating classification models to detect fraudulent transactions using the cleaned datasets. Both baseline and ensemble models are implemented, with robust handling of class imbalance and cross-validation for reliable performance estimation.
-
-Key Steps
-
-Data Preparation
-
-Split the cleaned dataset using stratified train-test split to preserve class distribution.
-
-Separate features from the target variable (class).
-
-Drop raw datetime columns and high-cardinality IDs (signup_time, purchase_time, device_id, ip_address).
-
-Modeling
-
-Baseline Model: Logistic Regression with class balancing, trained on undersampled data.
-
-Ensemble Model: Random Forest with hyperparameter tuning (n_estimators, max_depth, min_samples_split) using Grid Search and Stratified K-Fold cross-validation (k=5).
-
-Preprocessing: numerical features scaled with StandardScaler, categorical features one-hot encoded.
-
-Evaluation
-
-Metrics used: F1-score, AUC-PR, and confusion matrices.
-
-Cross-validation scores reported to assess model stability and robustness.
-
-Model comparison performed to select the best model for deployment.
-
-Output
-
-Performance metrics for both Logistic Regression and Random Forest models.
-
-Visualizations: bar charts comparing F1-score and AUC-PR, precision-recall curves, and confusion matrices.
-
-Best Random Forest model saved to the models/ folder as best_random_forest.pkl for reuse and deployment.
+---
 
 ## Model Selection Justification
 
-After training and evaluating both the Logistic Regression (baseline) and the Random Forest (ensemble) models, the **Random Forest model is selected as the best model** for the following reasons:
+The **Random Forest model** was selected for deployment due to:
 
-1. **Superior Performance Metrics**  
-   - The Random Forest achieved higher **F1-score** and **AUC-PR** compared to Logistic Regression, indicating better balance between precision and recall. This is critical in fraud detection where missing fraudulent transactions can be costly.
+1. **Superior Performance Metrics:** Higher F1-score and AUC-PR than Logistic Regression.
+2. **Robustness to Class Imbalance:** Ensemble approach handles imbalanced data effectively with stable cross-validation results.
+3. **Ability to Capture Non-linear Patterns:** Can model complex feature interactions common in fraud.
+4. **Interpretability & Practicality:** Provides feature importance insights; saved as `best_random_forest.pkl`.
 
-2. **Robustness to Class Imbalance**  
-   - Random Forest handles class imbalance effectively through ensemble learning. Cross-validation showed consistent AUC-PR scores across folds, demonstrating stable performance.
+---
 
-3. **Ability to Capture Non-linear Patterns**  
-   - Fraud patterns are often complex and non-linear. Random Forest can model intricate feature interactions that a linear model like Logistic Regression cannot.
+## Model Explainability using SHAP
 
-4. **Interpretability & Practicality**  
-   - Feature importance from Random Forest provides insights into which features contribute most to fraud prediction.  
-   - The model is saved as `best_random_forest.pkl` for deployment, ensuring practical usability.
+### Objective
+Interpret the Random Forest model’s predictions using **SHAP** to identify the key drivers of fraud and derive actionable business recommendations.
 
-**Conclusion:**  
-Considering its **higher predictive performance, robustness, and interpretability**, the Random Forest is clearly the best choice for detecting fraudulent transactions in this dataset.
+### Key Steps
+1. **Global Feature Importance**
+   - Extracted built-in Random Forest feature importance.
+   - Generated **top 10 feature importance plot**.
+   - Created SHAP summary plot to identify features contributing most to predictions.
+
+2. **Individual Predictions**
+   - Generated SHAP force plots for:
+     - True Positive (correctly identified fraud)
+     - False Positive (legitimate flagged as fraud)
+     - False Negative (missed fraud)
+   - Highlighted features driving each specific prediction.
+
+3. **Comparison & Interpretation**
+   - Compared SHAP importance with Random Forest built-in importance.
+   - Identified top 5 SHAP-driven features for fraud:
+     1. `num__time_since_signup`  
+     2. `cat__source_Direct`  
+     3. `num__day_of_week`  
+     4. `cat__source_SEO`  
+     5. `num__user_id`  
+   - Observed non-linear effects and interaction features captured by SHAP but not by RF importance alone.
+
+4. **Business Recommendations**
+   - **⏱️ Early Transaction Verification:** Transactions within 2 hours of signup should undergo additional verification. (`num__time_since_signup`)  
+   - **🌐 Source Monitoring:** Transactions from Direct or SEO sources should be flagged for review. (`cat__source_Direct`, `cat__source_SEO`)  
+   - **📅 Day-of-Week Alerts:** Increase monitoring on days with higher fraud likelihood. (`num__day_of_week`)  
+   - **🆔 High-Risk User IDs:** Review users with unusual IDs triggering other risk factors. (`num__user_id`)
+
+### Summary
+- SHAP analysis complements Random Forest importance by revealing non-linear patterns and feature interactions.
+- Provides actionable insights to guide fraud mitigation strategies in production.
+- Ensures interpretability, transparency, and practical utility of the deployed model.
+
+---
